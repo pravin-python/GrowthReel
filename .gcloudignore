@@ -1,0 +1,35 @@
+# Used only when building FROM THE REPO ROOT via `gcloud builds submit
+# -f api/Dockerfile.cloudrun .` (see deploy/gcp/README.md). Each service's own
+# `gcloud builds submit ./backend` / `./api` / `./frontend-app` instead picks
+# up that directory's own .gcloudignore.
+#
+# Explicit on purpose rather than relying on gcloud's "no .gcloudignore ->
+# merge in .gitignore" default: this repo has no root-level .gitignore (only
+# backend/.gitignore, api/.gitignore, frontend-app/.gitignore), and backend/
+# migrations + its built Tailwind CSS are git-ignored but still need to reach
+# this build — see backend/.gcloudignore's own comment for the full story.
+
+.git/
+.gcloudignore
+.dockerignore
+
+**/.venv/
+**/venv/
+**/node_modules/
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.coverage
+**/htmlcov/
+
+backend/db.sqlite3
+backend/db.sqlite3-journal
+backend/media/
+backend/staticfiles/
+backend/.env
+api/.env
+frontend-app/.env
+frontend-app/dist/
+frontend-app/

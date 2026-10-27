@@ -5,9 +5,9 @@
 # service calls `django.setup()` against that same project's code and
 # database, so any drift here risks ORM/migration-state mismatches between
 # the two processes.
-Django==5.2.6
-django-environ==0.11.2
-PyJWT==2.9.0
+Django==6.1.2
+django-environ==0.14.0
+PyJWT==2.15.1
 # Not used by any of this service's own code. Required anyway: Django's
 # settings loader imports `config` (the backend's project package) before
 # `config.settings.<env>`, and `backend/config/__init__.py` unconditionally
@@ -16,7 +16,7 @@ PyJWT==2.9.0
 # `ModuleNotFoundError: No module named 'celery'` even though this service
 # never creates or uses a Celery app itself. Pinned to the same version as
 # backend/requirements/base.txt for consistency.
-celery==5.4.0
+celery==5.6.3
 # Same reason as celery above: `INSTALLED_APPS` (backend/config/settings/base.py)
 # lists "corsheaders" and "rest_framework" as third-party apps, and Django's
 # app registry (`django.apps.populate()`, called by `django.setup()`)
@@ -25,15 +25,21 @@ celery==5.4.0
 # service's own routes never use DRF or django-cors-headers directly (FastAPI
 # has its own CORSMiddleware — see app/main.py). Pinned to the same versions
 # as backend/requirements/base.txt.
-django-cors-headers==4.4.0
-djangorestframework==3.15.2
+django-cors-headers==4.9.0
+djangorestframework==3.18.3
 # Post.cover_image is an ImageField; Django's app loading / system checks
 # touch Pillow for any installed model with an ImageField, so this must be
 # installed too, even though this service never handles image uploads itself.
-Pillow==10.4.0
+Pillow==13.0.0
+# backend/config/settings/{local,production}.py both configure
+# ENGINE=django.db.backends.postgresql, so any real ORM query this service
+# runs through django.setup() needs a Postgres driver available here too
+# (this is a separate process/venv from backend/, nothing is inherited from
+# it). Pinned to the same version as backend/requirements/base.txt.
+psycopg[binary]==3.3.6
 
 # FastAPI side of this service.
 fastapi==0.115.0
 uvicorn[standard]==0.30.6
 pydantic-settings==2.5.2
-redis==5.0.8
+redis==8.1.0

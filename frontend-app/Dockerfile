@@ -24,8 +24,18 @@ RUN addgroup -g 1001 -S appgroup \
   && touch /var/run/nginx.pid \
   && chown appuser:appgroup /var/run/nginx.pid
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# nginx.conf is a *template*: the base image's own entrypoint
+# (docker-entrypoint.d/20-envsubst-on-templates.sh) runs envsubst over every
+# /etc/nginx/templates/*.template at container start and writes the result to
+# /etc/nginx/conf.d/, substituting ${PORT}/${API_UPSTREAM} from the
+# environment below — so the same image works for docker-compose (these
+# defaults) and Cloud Run (overridden via --set-env-vars at deploy time)
+# without a rebuild.
+COPY nginx.conf /etc/nginx/templates/default.conf.template
 COPY --from=build --chown=appuser:appgroup /app/dist /usr/share/nginx/html
+
+ENV PORT=8080 \
+    API_UPSTREAM=http://api:8001
 
 USER appuser
 EXPOSE 8080

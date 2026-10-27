@@ -1,1 +1,87 @@
 @import "tailwindcss";
+
+@theme {
+  --color-brand-blue: #106ebe;
+  --color-brand-blue-dark: #0a1830;
+  --color-brand-mint: #0ffcbe;
+}
+
+@keyframes orb-float-1 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(24px, -32px, 0) scale(1.12);
+  }
+}
+
+@keyframes orb-float-2 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-28px, 26px, 0) scale(1.16);
+  }
+}
+
+@keyframes logo-spin-3d {
+  0% {
+    transform: perspective(600px) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(600px) rotateY(360deg);
+  }
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes active-shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.sidebar-3d {
+  perspective: 1400px;
+}
+
+.sidebar-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(42px);
+  pointer-events: none;
+}
+
+.logo-3d {
+  transform-style: preserve-3d;
+  animation: logo-spin-3d 7s linear infinite;
+}
+
+.nav-tilt {
+  transform-style: preserve-3d;
+  transition:
+    transform 0.15s ease-out,
+    box-shadow 0.25s ease-out,
+    background-color 0.2s ease-out;
+  will-change: transform;
+}
+
+.active-gradient {
+  background-size: 200% 200%;
+  animation: active-shimmer 3s ease infinite;
+}

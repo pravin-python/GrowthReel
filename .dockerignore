@@ -1,0 +1,27 @@
+# Used when building from the REPO ROOT context (currently only
+# api/Dockerfile.cloudrun — see that file's header comment for why). Each
+# service's own Dockerfile (backend/Dockerfile, api/Dockerfile,
+# frontend-app/Dockerfile) is built with that service's own directory as
+# context and never sees the repo root at all, so this file has no effect on
+# those builds.
+
+**/.venv/
+**/venv/
+**/node_modules/
+**/__pycache__/
+**/*.py[cod]
+**/.git/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.coverage
+**/htmlcov/
+
+backend/db.sqlite3
+backend/db.sqlite3-journal
+backend/media/
+backend/staticfiles/
+backend/.env
+api/.env
+frontend-app/.env
+frontend-app/dist/

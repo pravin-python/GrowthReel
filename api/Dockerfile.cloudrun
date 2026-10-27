@@ -1,0 +1,69 @@
+# syntax=docker/dockerfile:1
+#
+# Cloud Run build for the FastAPI `api` service.
+#
+# api/Dockerfile (context=./api) relies on docker-compose bind-mounting the
+# sibling backend/ directory in at `docker compose up` time (see that
+# Dockerfile's own comment) — there is no second container or shared volume
+# on Cloud Run to get backend/'s source from, so this Dockerfile bakes it
+# into the image instead. That means it MUST be built from the REPO ROOT,
+# not from api/:
+#
+#   docker build -f api/Dockerfile.cloudrun -t <tag> .
+#   # or, without a local Docker install:
+#   gcloud builds submit --tag <tag> -f api/Dockerfile.cloudrun .
+#
+# See api/app/core/config.py (BACKEND_DIR) and api/.env.example for why this
+# service needs the Django project's own source at all.
+
+FROM python:3.12-slim AS builder
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends build-essential libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+COPY api/requirements/ api/requirements/
+RUN pip install -r api/requirements/production.txt
+
+# ---- Final stage: minimal runtime image, non-root user ---------------------
+FROM python:3.12-slim AS final
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/opt/venv/bin:$PATH" \
+    BACKEND_DIR=/app/backend \
+    DJANGO_SETTINGS_MODULE=config.settings.production
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libpq5 \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --gid 1000 growthreel \
+    && useradd --uid 1000 --gid growthreel --shell /bin/bash --create-home growthreel
+
+WORKDIR /app
+
+COPY --from=builder /opt/venv /opt/venv
+COPY api/ /app/api/
+COPY backend/ /app/backend/
+
+RUN chown -R growthreel:growthreel /app
+
+USER growthreel
+
+WORKDIR /app/api
+
+EXPOSE 8001
+
+# uvicorn_worker.run() reads $PORT itself (default 8001) — see
+# api/app/core/uvicorn_worker.py — so this works unmodified whether Cloud Run
+# injects PORT=8080 or a deploy pins --port=8001 to match EXPOSE above.
+CMD ["python", "-m", "app.core.uvicorn_worker"]

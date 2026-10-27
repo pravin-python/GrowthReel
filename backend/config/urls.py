@@ -9,6 +9,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("apps.users.urls")),
     path("blog/", include("apps.blog.urls")),
+    path("about/", TemplateView.as_view(template_name="about.html"), name="about"),
     path("", TemplateView.as_view(template_name="home.html"), name="home"),
 ]
 

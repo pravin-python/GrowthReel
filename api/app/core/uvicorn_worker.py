@@ -20,14 +20,20 @@ own `X-Request-ID` / security headers).
 """
 from __future__ import annotations
 
+import os
+
 import uvicorn
 
 
-def run(host: str = "0.0.0.0", port: int = 8001, reload: bool = False) -> None:
+def run(host: str = "0.0.0.0", port: int | None = None, reload: bool = False) -> None:
+    # Cloud Run injects $PORT (defaults to 8080 there, or whatever --port
+    # was deployed with); docker-compose / local dev has no $PORT set, so
+    # this falls back to the service's own default, 8001, unchanged.
+    resolved_port = port if port is not None else int(os.environ.get("PORT", 8001))
     uvicorn.run(
         "app.main:app",
         host=host,
-        port=port,
+        port=resolved_port,
         reload=reload,
         server_header=False,
         date_header=True,

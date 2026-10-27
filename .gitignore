@@ -22,3 +22,7 @@ dist/
 .pytest_cache/
 .coverage
 htmlcov/
+.claude/
+graphify-out/
+.claude/
+.claude/

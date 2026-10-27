@@ -1,0 +1,13 @@
+# Builds the `api` service's Cloud Run image. Needed because that image is
+# built from the REPO ROOT using a non-default Dockerfile path/name
+# (api/Dockerfile.cloudrun — see that file's header comment for why), which
+# `gcloud builds submit --tag` alone can't express; a one-step Cloud Build
+# config can. Invoke from the repo root:
+#
+#   gcloud builds submit --config=api/cloudbuild.api.yaml \
+#       --substitutions=_IMAGE=REGION-docker.pkg.dev/PROJECT_ID/growthreel-repo/api:latest .
+#
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: ["build", "-f", "api/Dockerfile.cloudrun", "-t", "$_IMAGE", "."]
+images: ["$_IMAGE"]

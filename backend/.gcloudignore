@@ -1,0 +1,77 @@
+# Used by `gcloud builds submit`/`gcloud run deploy --source` when building
+# this directory. Deliberately NOT just ".gitignore merged in" (gcloud's
+# default behavior when no .gcloudignore exists) — see deploy/gcp/README.md
+# "Why .gcloudignore exists" for why that default would silently ship an
+# image with no Django migrations and no built Tailwind CSS.
+#
+# Keep this in sync with .gitignore's *intent* (same junk excluded), while
+# never excluding anything the Docker build step actually reads from disk:
+# apps/*/migrations/*.py and static/css/tailwind.css are both git-ignored
+# (generated/edited locally) but must still reach Cloud Build.
+
+.git/
+.gcloudignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Django runtime state (never needed at build time)
+*.log
+logs/*
+db.sqlite3
+db.sqlite3-journal
+/media/*
+/staticfiles/
+local_settings.py
+
+# LangGraph checkpoints of paused runs (development)
+qa_checkpoints.sqlite3*
+
+# Celery
+celerybeat-schedule
+celerybeat-schedule.*
+celerybeat.pid
+
+# Node (node_modules itself is never needed in the image; the CSS it builds,
+# static/css/tailwind.css, is NOT excluded above — it must reach the build).
+node_modules/
+
+# Environment / secrets — never upload real local secrets to Cloud Build.
+.env
+.env.*
+!.env.example
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Claude Code / graphify local state
+.claude/
+graphify-out/
