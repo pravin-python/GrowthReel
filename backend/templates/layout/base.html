@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}GrowthReel{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+</head>
+<body class="h-full flex flex-col min-h-screen text-slate-900">
+    {% include "layout/includes/header.html" %}
+
+    {% include "layout/includes/messages.html" %}
+
+    <main class="flex-1 mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include "layout/includes/footer.html" %}
+</body>
+</html>

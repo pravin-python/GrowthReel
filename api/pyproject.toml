@@ -1,0 +1,44 @@
+[project]
+name = "growthreel-api"
+version = "1.0.0"
+description = "GrowthReel FastAPI service for app.growthreel.com — reuses the Django backend's ORM in-process."
+requires-python = ">=3.12"
+readme = "README.md"
+
+# See backend/README.md "Dependency management" for the full rationale: `uv`
+# has no matching distribution on this machine's pip index, so installation
+# uses plain pip against requirements/{base,local,production,testing}.txt.
+# This pyproject.toml holds only metadata + tool config, the same adaptation
+# made on the backend side.
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = [".venv"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+exclude = ["\\.venv/"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_default_fixture_loop_scope = "function"

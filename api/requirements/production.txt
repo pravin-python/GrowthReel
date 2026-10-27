@@ -1,0 +1,8 @@
+# Production: base deps only. Unlike the Django backend (which layers on
+# gunicorn/whitenoise/sentry), this service has no static assets to serve and
+# uvicorn[standard] (in base.txt, via its uvloop/httptools extras) is already
+# a production-grade ASGI server on its own — run multiple worker processes
+# with `uvicorn app.main:app --workers N` (or behind a process manager) rather
+# than adding a second layer (e.g. gunicorn+UvicornWorker) for no real benefit
+# at this project's scale. Revisit if/when real production load demands it.
+-r base.txt

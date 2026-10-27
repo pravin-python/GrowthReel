@@ -1,0 +1,24 @@
+# Each service also has its own, more specific .gitignore
+# (backend/.gitignore, api/.gitignore, frontend-app/.gitignore). This root
+# file only catches things that could otherwise land outside those trees.
+
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+node_modules/
+dist/
+
+.env
+*.env.local
+
+.vscode/
+.idea/
+*.log
+
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+.coverage
+htmlcov/

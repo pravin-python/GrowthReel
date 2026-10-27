@@ -1,0 +1,28 @@
+{% extends "layout/base.html" %}
+
+{% block title %}GrowthReel — Grow your audience{% endblock %}
+
+{% block content %}
+<section class="text-center py-20">
+    <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-slate-900">
+        Grow your reach, one reel at a time.
+    </h1>
+    <p class="mt-6 text-lg text-slate-600 max-w-2xl mx-auto">
+        GrowthReel helps teams plan, publish and track short-form content that
+        actually moves the needle. Read the latest from our team on the
+        <a href="{% url 'blog:list' %}" class="text-indigo-600 font-medium hover:underline">blog</a>.
+    </p>
+    <div class="mt-10 flex justify-center gap-4">
+        {% if request.user.is_authenticated %}
+            <span class="inline-flex items-center rounded-md bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-700">
+                Welcome back, {{ request.user.get_short_name }}
+            </span>
+        {% else %}
+            <a href="{% url 'users:login' %}"
+               class="inline-flex items-center rounded-md bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
+                Log in
+            </a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

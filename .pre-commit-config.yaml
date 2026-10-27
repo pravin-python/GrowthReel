@@ -1,0 +1,79 @@
+# Root pre-commit config for the whole GrowthReel monorepo (install this one
+# from the repo root: `pip install pre-commit && pre-commit install`).
+# `backend/.pre-commit-config.yaml` and `api/.pre-commit-config.yaml` are kept
+# too, documenting each service's own hook set 1:1 with this file in case
+# either service is ever split into its own repository — but as a monorepo,
+# pre-commit only discovers the config at the repo root, so THIS file is the
+# one that actually runs. Each Python hook is scoped with `files:` so ruff/
+# black/mypy/bandit run against the right project with the right config.
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        name: ruff (backend)
+        files: ^backend/
+        args: [--fix, --config=backend/pyproject.toml]
+      - id: ruff-format
+        name: ruff-format (backend)
+        files: ^backend/
+        args: [--config=backend/pyproject.toml]
+      - id: ruff
+        name: ruff (api)
+        files: ^api/
+        args: [--fix, --config=api/pyproject.toml]
+      - id: ruff-format
+        name: ruff-format (api)
+        files: ^api/
+        args: [--config=api/pyproject.toml]
+
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+        name: black (backend)
+        files: ^backend/
+        args: [--config=backend/pyproject.toml]
+      - id: black
+        name: black (api)
+        files: ^api/
+        args: [--config=api/pyproject.toml]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.2
+    hooks:
+      - id: mypy
+        name: mypy (backend)
+        files: ^backend/
+        args: [--config-file=backend/pyproject.toml]
+        exclude: ^backend/.*/migrations/
+        additional_dependencies: [django-stubs]
+      - id: mypy
+        name: mypy (api)
+        files: ^api/
+        args: [--config-file=api/pyproject.toml]
+
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.10
+    hooks:
+      - id: bandit
+        name: bandit (backend)
+        files: ^backend/(apps|config)/
+        args: ["-c", "backend/pyproject.toml", "-r", "backend/apps", "backend/config"]
+        pass_filenames: false
+        additional_dependencies: ["bandit[toml]"]
+      - id: bandit
+        name: bandit (api)
+        files: ^api/app/
+        args: ["-c", "api/pyproject.toml", "-r", "api/app"]
+        pass_filenames: false
+        additional_dependencies: ["bandit[toml]"]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: debug-statements

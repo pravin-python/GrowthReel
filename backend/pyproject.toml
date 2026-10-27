@@ -1,0 +1,59 @@
+[project]
+name = "growthreel-backend"
+version = "1.0.0"
+description = "GrowthReel Django content/admin/CRM/blog backend for growthreel.com."
+requires-python = ">=3.12"
+readme = "README.md"
+
+# NOTE on dependency management: the original spec called for Poetry or uv
+# for dependency management. Neither is installable on this machine (uv has
+# no matching distribution on this machine's pip index; poetry was not
+# verified available either), so actual dependency installation uses plain
+# pip against requirements/{base,local,production,testing}.txt instead. This
+# pyproject.toml is kept anyway, holding only project metadata and
+# tool configuration ([tool.ruff], [tool.black], [tool.mypy]) per the task
+# spec, with no [tool.poetry] / build-backend section since it does not
+# drive installs. See README.md "Dependency management" section.
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = [".venv", "migrations"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "DJ",  # flake8-django
+    "C4",  # flake8-comprehensions
+]
+ignore = ["DJ001"]  # allow null=True on CharField/TextField where intentional
+
+[tool.ruff.lint.isort]
+known-first-party = ["apps", "config"]
+
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+extend-exclude = "migrations"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["mypy_django_plugin.main"]
+exclude = ["migrations/", ".venv/"]
+# strict mode is relaxed for Django's dynamic attributes (manager/field
+# descriptors) via the django-stubs mypy plugin; install `django-stubs` and
+# `django-stubs-ext` as dev/testing extras if you want this enforced in CI.
+ignore_missing_imports = true
+
+[tool.django-stubs]
+django_settings_module = "config.settings.local"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.testing"
+python_files = ["tests.py", "test_*.py"]
+addopts = "--reuse-db"

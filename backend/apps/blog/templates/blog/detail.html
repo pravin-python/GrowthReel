@@ -1,0 +1,35 @@
+{% extends "layout/base.html" %}
+
+{% block title %}{{ post.title }} — GrowthReel{% endblock %}
+
+{% block content %}
+<article class="max-w-3xl mx-auto">
+    <p class="mb-4">
+        <a href="{% url 'blog:list' %}" class="text-sm font-medium text-indigo-600 hover:underline">&larr; Back to blog</a>
+    </p>
+
+    {% if post.cover_image %}
+        <img src="{{ post.cover_image.url }}" alt="{{ post.title }}" class="w-full rounded-lg mb-8 object-cover">
+    {% endif %}
+
+    <h1 class="text-3xl font-bold text-slate-900">{{ post.title }}</h1>
+    <p class="mt-2 text-sm text-slate-400">
+        {{ post.published_at|date:"N j, Y" }} &middot; {{ post.author.get_full_name }}
+        {% if post.category %} &middot; {{ post.category.name }}{% endif %}
+    </p>
+
+    <div class="mt-8 prose prose-slate max-w-none whitespace-pre-line text-slate-700">
+        {{ post.body }}
+    </div>
+
+    {% if post.tag_list %}
+        <div class="mt-8 flex flex-wrap gap-2">
+            {% for tag in post.tag_list %}
+                <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                    #{{ tag }}
+                </span>
+            {% endfor %}
+        </div>
+    {% endif %}
+</article>
+{% endblock %}

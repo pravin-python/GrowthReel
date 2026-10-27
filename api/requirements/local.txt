@@ -1,0 +1,3 @@
+# Local development: base deps only, uvicorn[standard] (already in base.txt)
+# includes --reload support (watchfiles) for `uvicorn app.main:app --reload`.
+-r base.txt
